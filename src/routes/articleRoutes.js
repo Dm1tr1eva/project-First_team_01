@@ -23,6 +23,6 @@ const articleRoutes = Router();
 // articleRoutes.patch("/:id", celebrate(updateArticleSchema), ctrl.updateArticle);
 
 // Видалити статтю (private)
-// articleRoutes.delete("/:id", celebrate(articleIdSchema), ctrl.deleteArticle);
+articleRoutes.delete("/:id", celebrate(articleIdSchema), ctrl.deleteArticle);
 
 export default articleRoutes;
