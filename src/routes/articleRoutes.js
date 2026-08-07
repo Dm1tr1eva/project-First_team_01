@@ -2,8 +2,8 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 
 // Імпорт контролерів article (розкоментувати, коли почнете писати код):
-// import { article as ctrl } from "../controllers/index.js";
-// import { getArticlesSchema, articleIdSchema, createArticleSchema, updateArticleSchema } from "../validations/index.js";
+import { article as ctrl } from "../controllers/index.js";
+import { getArticlesSchema, articleIdSchema, createArticleSchema, updateArticleSchema } from "../validations/index.js";
 
 const articleRoutes = Router();
 
@@ -17,10 +17,10 @@ const articleRoutes = Router();
 // articleRoutes.get("/:id", celebrate(articleIdSchema), ctrl.getArticleById);
 
 // Створити статтю (private)
-// articleRoutes.post("/", celebrate(createArticleSchema), ctrl.createArticle);
+articleRoutes.post("/", celebrate(createArticleSchema), ctrl.createArticle);
 
 // Редагувати статтю (private)
-// articleRoutes.patch("/:id", celebrate(updateArticleSchema), ctrl.updateArticle);
+articleRoutes.patch("/:id", celebrate(updateArticleSchema), ctrl.updateArticle);
 
 // Видалити статтю (private)
 // articleRoutes.delete("/:id", celebrate(articleIdSchema), ctrl.deleteArticle);
