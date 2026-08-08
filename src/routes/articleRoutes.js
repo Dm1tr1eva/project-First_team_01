@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { celebrate } from "celebrate";
+export { authMiddleware } from "./authMiddleware.js";
+export { upload } from "./uploadMiddleware.js";
 
 // Імпорт контролерів article (розкоментувати, коли почнете писати код):
 import { article as ctrl } from "../controllers/index.js";
@@ -22,7 +24,13 @@ const articleRoutes = Router();
 // articleRoutes.get("/:id", celebrate(articleIdSchema), ctrl.getArticleById);
 
 // Створити статтю (private)
-articleRoutes.post("/", celebrate(createArticleSchema), ctrl.createArticle);
+articleRoutes.post(
+  "/",
+  authMiddleware,
+  upload.single("img"),
+  celebrate(createArticleSchema),
+  ctrl.createArticle,
+);
 
 // Редагувати статтю (private)
 // articleRoutes.patch("/:id", celebrate(updateArticleSchema), ctrl.updateArticle);
