@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { celebrate } from "celebrate";
-export { authMiddleware } from "./authMiddleware.js";
-export { upload } from "./uploadMiddleware.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/uploadMiddleware.js";
 
 // Імпорт контролерів article (розкоментувати, коли почнете писати код):
 import { article as ctrl } from "../controllers/index.js";
