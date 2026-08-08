@@ -33,8 +33,13 @@ articleRoutes.post(
 );
 
 // Редагувати статтю (private)
-// articleRoutes.patch("/:id", celebrate(updateArticleSchema), ctrl.updateArticle);
-
+articleRoutes.patch(
+  "/:id",
+  authMiddleware,
+  upload.single("img"),
+  celebrate(updateArticleSchema),
+  ctrl.updateArticle,
+);
 // Видалити статтю (private)
 // articleRoutes.delete("/:id", celebrate(articleIdSchema), ctrl.deleteArticle);
 
