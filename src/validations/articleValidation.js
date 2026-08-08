@@ -23,6 +23,21 @@ export const getArticlesSchema = {
   }),
 };
 
+export const getArticlesFilteredSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20).default(10),
+    category: Joi.string()
+      .valid(...CATEGORIES)
+      .optional(),
+    search: Joi.string().trim().allow(""),
+    sortBy: Joi.string()
+      .valid("createdAt", "date", "rate", "title")
+      .default("createdAt"),
+    order: Joi.string().valid("asc", "desc").default("desc"),
+  }),
+};
+
 export const createArticleSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(3).max(48).required(),

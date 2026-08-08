@@ -1,1 +1,50 @@
-export const getArticlesFiltered = async (req, res, next) => {};
+import { Article } from "../../models/Article.js";
+ 
+export const getArticlesFiltered = async (req, res, next) => {
+  try {
+    const {
+      page = 1,
+      perPage = 10,
+      category,
+      search,
+      sortBy = "createdAt",
+      order = "desc",
+    } = req.query;
+ 
+    const skip = (page - 1) * perPage;
+ 
+    const filter = {};
+ 
+    if (category) {
+      filter.category = category;
+    }
+ 
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { desc: { $regex: search, $options: "i" } },
+      ];
+    }
+ 
+    const sort = { [sortBy]: order === "asc" ? 1 : -1 };
+ 
+    const articlesQuery = Article.find(filter);
+ 
+    const [totalItems, articles] = await Promise.all([
+      articlesQuery.clone().countDocuments(),
+      articlesQuery.sort(sort).skip(skip).limit(perPage),
+    ]);
+ 
+    const totalPages = Math.ceil(totalItems / perPage);
+ 
+    res.status(200).json({
+      page,
+      perPage,
+      totalItems,
+      totalPages,
+      articles,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
