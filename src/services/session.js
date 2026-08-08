@@ -1,4 +1,4 @@
-import { FIFTEEN_MINUTES, ONE_DAY } from "../constants/session";
+import { FIFTEEN_MINUTES, ONE_DAY } from "../constants/session.js";
 import { Session } from "../models/index.js";
 
 export const createSession = async (userId) => {
