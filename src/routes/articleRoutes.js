@@ -15,7 +15,7 @@ import {
 const articleRoutes = Router();
 
 // Список статей з пагінацією (public)
-// articleRoutes.get("/", celebrate(getArticlesSchema), ctrl.getArticles);
+articleRoutes.get("/", celebrate(getArticlesSchema), ctrl.getArticles);
 
 // Статті з фільтрами/сортуванням (public, additional)
 // articleRoutes.get("/filter", ctrl.getArticlesFiltered);
