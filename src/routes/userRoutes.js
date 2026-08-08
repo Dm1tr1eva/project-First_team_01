@@ -2,13 +2,13 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 
 // Імпорт контролерів user (розкоментувати, коли почнете писати код):
-// import { user as ctrl } from "../controllers/index.js";
+import { user as ctrl } from "../controllers/index.js";
 // import { updateUserSchema } from "../validations/index.js";
 
 const userRoutes = Router();
 
 // Отримати інфо про користувача за id (public)
-// userRoutes.get("/:id", ctrl.getUserInfo);
+userRoutes.get("/:id", ctrl.getUserInfo);
 
 // Оновити дані користувача (private)
 // userRoutes.patch("/me", celebrate(updateUserSchema), ctrl.updateUser);
