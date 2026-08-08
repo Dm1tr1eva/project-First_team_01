@@ -21,7 +21,7 @@ articleRoutes.get("/", celebrate(getArticlesSchema), ctrl.getArticles);
 // articleRoutes.get("/filter", ctrl.getArticlesFiltered);
 
 // Отримати статтю за id (public)
-// articleRoutes.get("/:id", celebrate(articleIdSchema), ctrl.getArticleById);
+articleRoutes.get("/:id", celebrate(articleIdSchema), ctrl.getArticleById);
 
 // Створити статтю (private)
 articleRoutes.post(
