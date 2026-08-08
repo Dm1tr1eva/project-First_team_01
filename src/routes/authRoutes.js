@@ -2,7 +2,7 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 
 // Імпорт контролерів auth (розкоментувати, коли почнете писати код):
-// import { auth as ctrl } from "../controllers/index.js";
+import { auth as ctrl } from "../controllers/index.js";
 // import { registerSchema, loginSchema } from "../validations/index.js";
 
 const authRoutes = Router();
@@ -17,6 +17,6 @@ const authRoutes = Router();
 // authRoutes.post("/logout", ctrl.logout);
 
 // Оновлення access/refresh токена (protected)
-// authRoutes.post("/refresh", ctrl.refresh);
+authRoutes.post("/refresh", ctrl.refresh);
 
 export default authRoutes;
