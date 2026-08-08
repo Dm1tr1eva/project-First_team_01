@@ -2,6 +2,8 @@ import createHttpError from "http-errors";
 import { User } from "../../models/User.js";
 import bcrypt from "bcrypt";
 import { Session } from "../../models/Session.js";
+import { createSession, setSessionCookies } from "../../services/session.js";
+
 export const login = async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
