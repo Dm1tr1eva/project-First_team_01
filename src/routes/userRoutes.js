@@ -10,7 +10,7 @@ import { articleIdSchema } from "../validations/index.js";
 const userRoutes = Router();
 
 // Отримати інфо про користувача за id (public)
-// userRoutes.get("/:id", ctrl.getUserInfo);
+userRoutes.get("/:id", ctrl.getUserInfo);
 
 // Оновити дані користувача (private)
 // userRoutes.patch("/me", celebrate(updateUserSchema), ctrl.updateUser);
