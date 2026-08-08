@@ -28,6 +28,11 @@ const userRoutes = Router();
 userRoutes.post("/me/saved/:id", authMiddleware, celebrate(articleIdSchema), ctrl.addSavedArticle);
 
 // Видалити статтю зі збережених (private)
-// userRoutes.delete("/me/saved/:articleId", ctrl.removeSavedArticle);
+userRoutes.delete(
+  "/me/saved/:id",
+  authMiddleware,
+  celebrate(articleIdSchema),
+  ctrl.removeSavedArticle,
+);
 
 export default userRoutes;
