@@ -7,6 +7,7 @@ import { upload } from "../middleware/uploadMiddleware.js";
 import { article as ctrl } from "../controllers/index.js";
 import {
   getArticlesSchema,
+  getArticlesFilteredSchema,
   articleIdSchema,
   createArticleSchema,
   updateArticleSchema,
