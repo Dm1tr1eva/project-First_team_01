@@ -40,7 +40,13 @@ articleRoutes.patch(
   celebrate(updateArticleSchema),
   ctrl.updateArticle,
 );
+
 // Видалити статтю (private)
-// articleRoutes.delete("/:id", celebrate(articleIdSchema), ctrl.deleteArticle);
+articleRoutes.delete(
+    "/:id",
+    authMiddleware,
+    celebrate(articleIdSchema), 
+    ctrl.deleteArticle,
+);
 
 export default articleRoutes;
