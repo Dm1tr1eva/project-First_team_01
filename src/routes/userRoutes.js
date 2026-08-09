@@ -5,8 +5,6 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 import { articleIdSchema } from "../validations/index.js";
 
 // Імпорт контролерів user (розкоментувати, коли почнете писати код):
-// import { updateUserSchema } from "../validations/index.js";
-
 const userRoutes = Router();
 
 // Отримати інфо про користувача за id (public)
@@ -19,7 +17,7 @@ userRoutes.get("/:id", ctrl.getUserInfo);
 // userRoutes.patch("/me/avatar", ctrl.updateAvatar);
 
 // Отримати статті користувача (public)
-// userRoutes.get("/:id/articles", ctrl.getUserArticles);
+userRoutes.get("/:id/articles", celebrate(articleIdSchema), ctrl.getUserArticles);
 
 // Отримати збережені статті (private)
 userRoutes.get("/me/saved", authMiddleware, ctrl.getSavedArticles);
