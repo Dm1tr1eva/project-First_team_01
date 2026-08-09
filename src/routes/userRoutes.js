@@ -22,7 +22,7 @@ userRoutes.get("/:id", ctrl.getUserInfo);
 // userRoutes.get("/:id/articles", ctrl.getUserArticles);
 
 // Отримати збережені статті (private)
-// userRoutes.get("/me/saved", ctrl.getSavedArticles);
+userRoutes.get("/me/saved", authMiddleware, ctrl.getSavedArticles);
 
 // Додати статтю у збережені (private)
 userRoutes.post("/me/saved/:id", authMiddleware, celebrate(articleIdSchema), ctrl.addSavedArticle);
