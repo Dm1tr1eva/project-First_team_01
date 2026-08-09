@@ -12,6 +12,7 @@ userRoutes.get("/:id", ctrl.getUserInfo);
 
 // Оновити дані користувача (private)
 // userRoutes.patch("/me", celebrate(updateUserSchema), ctrl.updateUser);
+userRoutes.patch("/me", authMiddleware, celebrate(updateUserSchema), ctrl.updateUser);
 
 // Додати/змінити аватар (private)
 // userRoutes.patch("/me/avatar", ctrl.updateAvatar);
