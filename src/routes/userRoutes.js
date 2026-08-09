@@ -2,8 +2,8 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 
 // Імпорт контролерів user (розкоментувати, коли почнете писати код):
- import { user as ctrl } from "../controllers/index.js";
-// import { updateUserSchema } from "../validations/index.js";
+import { user as ctrl } from "../controllers/index.js";
+import { articleIdSchema } from "../validations/index.js";
 
 const userRoutes = Router();
 
@@ -17,7 +17,7 @@ const userRoutes = Router();
 // userRoutes.patch("/me/avatar", ctrl.updateAvatar);
 
 // Отримати статті користувача (public)
- userRoutes.get("/:id/articles", ctrl.getUserArticles);
+userRoutes.get("/:id/articles", celebrate(articleIdSchema), ctrl.getUserArticles);
 
 // Отримати збережені статті (private)
 // userRoutes.get("/me/saved", ctrl.getSavedArticles);
