@@ -8,11 +8,10 @@ import { articleIdSchema } from "../validations/index.js";
 // import { updateUserSchema } from "../validations/index.js";
 
 const userRoutes = Router();
-
+userRoutes.get("/me", authMiddleware, ctrl.getMe);
 // Отримати інфо про користувача за id (public)
 userRoutes.get("/:id", ctrl.getUserInfo);
 
-userRoutes.get("/me", ctrl.getMe);
 // Оновити дані користувача (private)
 // userRoutes.patch("/me", celebrate(updateUserSchema), ctrl.updateUser);
 
