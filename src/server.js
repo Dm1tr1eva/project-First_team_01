@@ -18,6 +18,18 @@ import categoriesRoutes from "./routes/categoriesRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Локальні адреси фронтенду — щоб команді не треба було заповнювати CLIENT_URL для дев-режиму
+const DEV_ORIGINS = ["http://localhost:3000", "http://localhost:3001"];
+
+// CLIENT_URL може містити кілька адрес через кому (напр. прод + прев'ю-деплой)
+const allowedOrigins = [
+  ...(process.env.CLIENT_URL ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+  ...(process.env.NODE_ENV === "production" ? [] : DEV_ORIGINS),
+];
+
 app.use(logger);
 app.use(helmet());
 app.use(
@@ -26,7 +38,18 @@ app.use(
     limit: "100kb",
   }),
 );
-app.use(cors());
+app.use(
+  cors({
+    // credentials: true не працює з origin: "*" — браузер вимагає конкретну адресу
+    origin: (origin, callback) => {
+      // Запити без заголовка Origin (curl, Postman, сервер-до-сервера) не є CORS-запитами
+      if (!origin) return callback(null, true);
+
+      return callback(null, allowedOrigins.includes(origin));
+    },
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);

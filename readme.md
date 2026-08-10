@@ -41,7 +41,7 @@
 | `PORT`                  | Порт сервера (за замовчуванням 3000)                          |
 | `NODE_ENV`              | `development` / `production`                                  |
 | `MONGO_URL`             | Рядок підключення до MongoDB Atlas                            |
-| `CLIENT_URL`            | Адреса фронтенду — для CORS (заповнити, коли з'явиться фронт) |
+| `CLIENT_URL`            | Адреси фронтенду для CORS, кілька — через кому                |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary Cloud name                                         |
 | `CLOUDINARY_API_KEY`    | Cloudinary API Key                                            |
 | `CLOUDINARY_API_SECRET` | Cloudinary API Secret                                         |
