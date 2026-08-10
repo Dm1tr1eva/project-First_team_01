@@ -11,14 +11,22 @@ export const login = async (req, res, next) => {
   }
 
   const isValidPassword = await bcrypt.compare(req.body.password, user.password);
-  console.log(req.body.password, user.password);
 
   if (!isValidPassword) {
+    throw createHttpError(401, "Invalid credentials");
+  }
+  if (!user.password) {
     throw createHttpError(401, "Invalid credentials");
   }
   await Session.deleteOne({ userId: user._id });
 
   const newSession = await createSession(user._id);
   setSessionCookies(res, newSession);
-  res.status(200).json({ user });
+
+  res.status(201).json({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    avatarUrl: user.avatarUrl,
+  });
 };
