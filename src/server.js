@@ -21,11 +21,12 @@ const PORT = process.env.PORT || 3000;
 // Локальні адреси фронтенду — щоб команді не треба було заповнювати CLIENT_URL для дев-режиму
 const DEV_ORIGINS = ["http://localhost:3000", "http://localhost:3001"];
 
-// CLIENT_URL може містити кілька адрес через кому (напр. прод + прев'ю-деплой)
+// CLIENT_URL може містити кілька адрес через кому (напр. прод + прев'ю-деплой).
+// Слеш у кінці зрізаємо: браузер надсилає Origin без нього, інакше порівняння не збіглося б
 const allowedOrigins = [
   ...(process.env.CLIENT_URL ?? "")
     .split(",")
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
     .filter(Boolean),
   ...(process.env.NODE_ENV === "production" ? [] : DEV_ORIGINS),
 ];
