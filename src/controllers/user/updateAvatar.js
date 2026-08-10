@@ -1,16 +1,26 @@
-
+import createHttpError from "http-errors";
+import { v2 as cloudinary } from "cloudinary";
 import { User } from "../../models/User.js";
+import { saveFileToCloudinary } from "../../utils/saveFileToCloudinary.js";
 
 export const updateAvatar = async (req, res, next) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "Будь ласка, виберіть фото" });
+      throw createHttpError(400, "Будь ласка, виберіть фото");
     }
 
-    const avatarUrl = req.file.path;
+    const currentUser = await User.findById(req.user._id);
+    const oldAvatarUrl = currentUser?.avatarUrl;
+
+    if (oldAvatarUrl) {
+      const publicId = oldAvatarUrl.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`harmoniq/avatars/${publicId}`);
+    }
+
+    const avatarUrl = await saveFileToCloudinary(req.file.buffer, "avatars");
 
     const user = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { avatarUrl: avatarUrl },
       { new: true }
     );
@@ -23,7 +33,6 @@ export const updateAvatar = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("Помилка завантаження аватара:", error);
     next(error);
   }
 };
