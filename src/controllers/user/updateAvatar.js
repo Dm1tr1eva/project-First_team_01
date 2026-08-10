@@ -9,13 +9,7 @@ export const updateAvatar = async (req, res, next) => {
       throw createHttpError(400, "Будь ласка, виберіть фото");
     }
 
-    const currentUser = await User.findById(req.user._id);
-    const oldAvatarUrl = currentUser?.avatarUrl;
-
-    if (oldAvatarUrl) {
-      const publicId = oldAvatarUrl.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(`harmoniq/avatars/${publicId}`);
-    }
+    const oldAvatarUrl = req.user.avatarUrl;
 
     const avatarUrl = await saveFileToCloudinary(req.file.buffer, "avatars");
 
@@ -25,6 +19,16 @@ export const updateAvatar = async (req, res, next) => {
       { new: true }
     );
 
+    if (oldAvatarUrl) {
+      try {
+        const publicId = oldAvatarUrl.split("/").pop().split(".")[0];
+        await cloudinary.uploader.destroy(`avatars/${publicId}`);
+      } catch (cleanupError) {
+        console.warn("Не вдалося видалити старий аватар:", cleanupError.message);
+      }
+    }
+
+  
     res.status(200).json({
       status: "success",
       message: "Фото успішно завантажено",
