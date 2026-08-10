@@ -5,6 +5,7 @@ import { getUserArticles } from "./getUserArticles.js";
 import { getSavedArticles } from "./getSavedArticles.js";
 import { addSavedArticle } from "./addSavedArticle.js";
 import { removeSavedArticle } from "./removeSavedArticle.js";
+import { getMe } from "./getMe.js";
 
 export const user = {
   getUserInfo,
@@ -14,4 +15,5 @@ export const user = {
   getSavedArticles,
   addSavedArticle,
   removeSavedArticle,
+  getMe,
 };

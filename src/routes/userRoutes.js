@@ -12,6 +12,7 @@ const userRoutes = Router();
 // Отримати інфо про користувача за id (public)
 userRoutes.get("/:id", ctrl.getUserInfo);
 
+userRoutes.get("/me", ctrl.getMe);
 // Оновити дані користувача (private)
 // userRoutes.patch("/me", celebrate(updateUserSchema), ctrl.updateUser);
 

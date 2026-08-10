@@ -18,5 +18,7 @@ authRoutes.post("/register", celebrate(registerSchema), ctrl.register);
 
 // Оновлення access/refresh токена (protected)
 // authRoutes.post("/refresh", ctrl.refresh);
+// Оновлення access/refresh токена (protected)
+authRoutes.post("/auth/session", ctrl.sessionTru);
 
 export default authRoutes;
