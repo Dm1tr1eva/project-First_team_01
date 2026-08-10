@@ -9,21 +9,21 @@ export const login = async (req, res, next) => {
   if (!user) {
     throw createHttpError(401, "Invalid credentials");
   }
-
+  if (!user.password) {
+    throw createHttpError(401, "Invalid credentials");
+  }
   const isValidPassword = await bcrypt.compare(req.body.password, user.password);
 
   if (!isValidPassword) {
     throw createHttpError(401, "Invalid credentials");
   }
-  if (!user.password) {
-    throw createHttpError(401, "Invalid credentials");
-  }
+
   await Session.deleteOne({ userId: user._id });
 
   const newSession = await createSession(user._id);
   setSessionCookies(res, newSession);
 
-  res.status(201).json({
+  res.status(200).json({
     id: user._id,
     name: user.name,
     email: user.email,
