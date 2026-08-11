@@ -12,15 +12,22 @@ export const articleIdSchema = {
   }),
 };
 
+// Тільки пагінація: фільтрація і пошук живуть у GET /articles/filter.
+// Раніше тут були category і search — вони проходили валідацію, але контролер
+// їх ігнорував і віддавав 200 з усіма статтями, тобто мовчки брехав клієнту.
 export const getArticlesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20).default(10),
-    category: Joi.string()
-      .valid(...CATEGORIES)
-      .optional(),
-    search: Joi.string().trim().allow(""),
   }),
+};
+
+// GET /users/:id/articles — перевіряє і :id, і пагінацію.
+// Раніше роут вішав саму articleIdSchema, тому query не валідувалася взагалі:
+// ?perPage=abc давало NaN у .skip()/.limit() і 500, а ?perPage=100000 — дамп усієї колекції.
+export const getUserArticlesSchema = {
+  ...articleIdSchema,
+  ...getArticlesSchema,
 };
 
 export const getArticlesFilteredSchema = {

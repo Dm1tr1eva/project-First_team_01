@@ -1,12 +1,17 @@
 import createHttpError from "http-errors";
+import { isValidObjectId } from "mongoose";
 import { Session, User } from "../models/index.js";
 
 export const authMiddleware = async (req, res, next) => {
-  console.log("Registering user");
   const { sessionId, accessToken } = req.cookies;
 
   if (!sessionId || !accessToken) {
     throw createHttpError(401, "Missing access token");
+  }
+
+  // Підроблена cookie не має ставати 400 — фронт чекає саме 401, щоб піти в логін
+  if (!isValidObjectId(sessionId)) {
+    throw createHttpError(401, "Session not found");
   }
 
   const session = await Session.findOne({

@@ -32,7 +32,7 @@ export const getArticlesFiltered = async (req, res, next) => {
  
     const [totalItems, articles] = await Promise.all([
       articlesQuery.clone().countDocuments(),
-      articlesQuery.sort(sort).skip(skip).limit(perPage),
+      articlesQuery.sort(sort).skip(skip).limit(perPage).populate("ownerId", "name avatarUrl"),
     ]);
  
     const totalPages = Math.ceil(totalItems / perPage);
