@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
 import { Article } from "../../models/index.js";
-import { saveFileToCloudinary } from "../../utils/index.js";
+import { saveFileToCloudinary, buildArticleDesc } from "../../utils/index.js";
 
 export const createArticle = async (req, res, next) => {
   const { title, desc, article, category } = req.body;
@@ -16,7 +16,7 @@ export const createArticle = async (req, res, next) => {
 
   const createdArticle = await Article.create({
     title,
-    desc,
+    desc: desc ?? buildArticleDesc(article),
     article,
     img: imageUrl,
     date,

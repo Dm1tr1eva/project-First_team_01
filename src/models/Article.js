@@ -12,10 +12,13 @@ const articleSchema = new Schema(
     desc: {
       type: String,
       required: true,
+      maxlength: 200,
     },
     article: {
       type: String,
       required: true,
+      minlength: 100,
+      maxlength: 4000,
     },
     img: {
       type: String,
