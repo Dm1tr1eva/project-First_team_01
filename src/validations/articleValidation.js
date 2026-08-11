@@ -45,11 +45,15 @@ export const getArticlesFilteredSchema = {
   }),
 };
 
+// Межі 100-4000 з ТЗ стосуються тексту статті (article), а не desc:
+// перевірено по сіду — desc там 0-54 символи (підзаголовок), article 469-4698.
+// desc не required: форма створення за макетом його не збирає, контролер
+// виводить його з тексту через buildArticleDesc.
 export const createArticleSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(3).max(48).required(),
-    desc: Joi.string().required(),
-    article: Joi.string().required(),
+    desc: Joi.string().max(200),
+    article: Joi.string().min(100).max(4000).required(),
     category: Joi.string()
       .valid(...CATEGORIES)
       .optional(),
@@ -60,8 +64,8 @@ export const updateArticleSchema = {
   ...articleIdSchema,
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(3).max(48),
-    desc: Joi.string(),
-    article: Joi.string(),
+    desc: Joi.string().max(200),
+    article: Joi.string().min(100).max(4000),
     category: Joi.string().valid(...CATEGORIES),
   }).min(1), // важливо: не дозволяємо порожнє тіло
 };
