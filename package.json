@@ -7,7 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "swagger": "node src/swagger.js",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -46,7 +45,6 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.9.0",
     "nodemon": "^3.1.14",
-    "prettier": "^3.9.6",
-    "swagger-autogen": "^2.23.7"
+    "prettier": "^3.9.6"
   }
 }
