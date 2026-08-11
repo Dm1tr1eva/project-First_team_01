@@ -4,6 +4,7 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 // Імпорт контролерів auth (розкоментувати, коли почнете писати код):
 import { auth as ctrl } from "../controllers/index.js";
 import { registerSchema, loginSchema } from "../validations/index.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const authRoutes = Router();
 
@@ -11,14 +12,14 @@ const authRoutes = Router();
 authRoutes.post("/register", celebrate(registerSchema), ctrl.register);
 
 // Логін (public)
-// authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
+authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
 
-// Логаут (private, потрібен authMiddleware)
-// authRoutes.post("/logout", ctrl.logout);
+authRoutes.post("/logout", authMiddleware, ctrl.logout);
 
 // Оновлення access/refresh токена (protected)
 // authRoutes.post("/refresh", ctrl.refresh);
 // Оновлення access/refresh токена (protected)
 authRoutes.get("/session", authMiddleware, ctrl.sessionTru);
+authRoutes.post("/refresh", ctrl.refresh);
 
 export default authRoutes;

@@ -3,9 +3,8 @@ import { celebrate } from "celebrate";
 import { user as ctrl } from "../controllers/index.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { articleIdSchema } from "../validations/index.js";
-
-// Імпорт контролерів user (розкоментувати, коли почнете писати код):
-// import { updateUserSchema } from "../validations/index.js";
+import { upload } from "../middleware/uploadMiddleware.js";
+import { updateUserSchema } from "../validations/userValidation.js";
 
 const userRoutes = Router();
 userRoutes.get("/me", authMiddleware, ctrl.getMe);
@@ -13,16 +12,21 @@ userRoutes.get("/me", authMiddleware, ctrl.getMe);
 userRoutes.get("/:id", ctrl.getUserInfo);
 
 // Оновити дані користувача (private)
-// userRoutes.patch("/me", celebrate(updateUserSchema), ctrl.updateUser);
+userRoutes.patch("/me", authMiddleware, celebrate(updateUserSchema), ctrl.updateUser);
 
 // Додати/змінити аватар (private)
-// userRoutes.patch("/me/avatar", ctrl.updateAvatar);
+userRoutes.patch(
+  "/me/avatar",
+  authMiddleware,
+  upload.single("avatar"),
+  ctrl.updateAvatar
+);
 
 // Отримати статті користувача (public)
-// userRoutes.get("/:id/articles", ctrl.getUserArticles);
+userRoutes.get("/:id/articles", celebrate(articleIdSchema), ctrl.getUserArticles);
 
 // Отримати збережені статті (private)
-// userRoutes.get("/me/saved", ctrl.getSavedArticles);
+userRoutes.get("/me/saved", authMiddleware, ctrl.getSavedArticles);
 
 // Додати статтю у збережені (private)
 userRoutes.post("/me/saved/:id", authMiddleware, celebrate(articleIdSchema), ctrl.addSavedArticle);
@@ -32,7 +36,7 @@ userRoutes.delete(
   "/me/saved/:id",
   authMiddleware,
   celebrate(articleIdSchema),
-  ctrl.removeSavedArticle,
+  ctrl.removeSavedArticle
 );
 
 export default userRoutes;

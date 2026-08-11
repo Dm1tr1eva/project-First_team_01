@@ -1,11 +1,10 @@
 import multer from "multer";
 import createHttpError from "http-errors";
 
-// Ліміт 1MB — згідно ТЗ (аватар користувача, фото статті)
 export const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 1 * 1024 * 1024,
+    fileSize: 1 * 1024 * 1024, // 1MB
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
