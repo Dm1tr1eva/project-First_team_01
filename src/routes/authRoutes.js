@@ -4,7 +4,6 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 // Імпорт контролерів auth (розкоментувати, коли почнете писати код):
 import { auth as ctrl } from "../controllers/index.js";
 import { registerSchema, loginSchema } from "../validations/index.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const authRoutes = Router();
 
