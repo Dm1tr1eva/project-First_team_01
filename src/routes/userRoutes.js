@@ -7,7 +7,7 @@ import { upload } from "../middleware/uploadMiddleware.js";
 import { updateUserSchema } from "../validations/userValidation.js";
 
 const userRoutes = Router();
-
+userRoutes.get("/me", authMiddleware, ctrl.getMe);
 // Отримати інфо про користувача за id (public)
 userRoutes.get("/:id", ctrl.getUserInfo);
 

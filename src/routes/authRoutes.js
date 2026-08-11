@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { celebrate } from "celebrate";
-
+import { authMiddleware } from "../middleware/authMiddleware.js";
 // Імпорт контролерів auth (розкоментувати, коли почнете писати код):
 import { auth as ctrl } from "../controllers/index.js";
 import { registerSchema, loginSchema } from "../validations/index.js";
@@ -17,6 +17,9 @@ authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
 authRoutes.post("/logout", authMiddleware, ctrl.logout);
 
 // Оновлення access/refresh токена (protected)
+// authRoutes.post("/refresh", ctrl.refresh);
+// Оновлення access/refresh токена (protected)
+authRoutes.get("/session", authMiddleware, ctrl.sessionTru);
 authRoutes.post("/refresh", ctrl.refresh);
 
 export default authRoutes;
