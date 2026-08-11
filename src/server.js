@@ -56,7 +56,13 @@ app.use(
 );
 app.use(cookieParser());
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  // withCredentials: щоб "Try it out" гарантовано слав сесійні куки,
+  // не покладаючись на дефолт fetch
+  swaggerUi.setup(swaggerDocument, { swaggerOptions: { withCredentials: true } }),
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

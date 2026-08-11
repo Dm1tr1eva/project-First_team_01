@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Harmoniq API",
-    "description": "API for managing user profiles, authors, and their publications.",
+    "description": "API for managing user profiles, authors, and their publications.\n\n## How to authorise here\n\n**The Authorize button does not work for this API, and that is expected.** Auth is based on httpOnly cookies, and browsers forbid JavaScript from setting the `Cookie` header, so Swagger UI physically cannot pass them no matter what you type into that dialog.\n\nDo this instead:\n\n1. Run `POST /api/auth/login` right here, with a real email and password.\n2. The server sets the `sessionId`, `accessToken` and `refreshToken` cookies in your browser itself.\n3. Every protected endpoint now works: the browser attaches those cookies automatically, because these docs are served from the same origin as the API.\n\nThe padlock icons stay open the whole time. Swagger UI has no way of knowing the cookies arrived, so judge by the server response, not by the icon.\n\n## Your session expires after 15 minutes\n\nThe `accessToken` cookie lives for 15 minutes, `sessionId` and `refreshToken` for 24 hours. Once the 15 minutes are up the browser drops the cookie by itself, and protected endpoints start answering `{ \"message\": \"Missing access token\" }` again even though you did log in.\n\nThat message therefore means one of two things: you never logged in here, or your 15 minutes ran out.\n\nYou do not need to log in again. Run `POST /api/auth/refresh` and carry on: it reads the `refreshToken` cookie, which is still valid, and issues a fresh set. The web app does exactly this in the background, Swagger UI has no such mechanism and will not do it for you.\n\nOne more thing: check the **Servers** dropdown at the top of the page. It should be `/`. If `http://localhost:3000` is selected while you are on the deployed docs, requests go to your own machine and there are no cookies there.",
     "version": "1.0.0"
   },
   "servers": [
@@ -175,6 +175,28 @@
       }
     },
     "/api/users/me": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get the current user",
+        "description": "Returns the full profile of the authenticated user, including email. Used by the frontend to restore the session after a page reload. The public GET /api/users/{id} cannot replace it: that one returns name, avatarUrl and articlesAmount only.",
+        "security": [{ "sessionAuth": [], "accessTokenAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CurrentUserResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+            }
+          }
+        }
+      },
       "patch": {
         "tags": ["Users"],
         "summary": "Update the current user",
@@ -382,12 +404,10 @@
       "get": {
         "tags": ["Articles"],
         "summary": "List articles",
-        "description": "Returns a paginated list of articles.",
+        "description": "Returns a paginated list of articles, newest first. Filtering and search live in GET /api/articles/filter, this endpoint accepts pagination only.",
         "parameters": [
           { "$ref": "#/components/parameters/PageParam" },
-          { "$ref": "#/components/parameters/PerPageParam" },
-          { "$ref": "#/components/parameters/CategoryParam" },
-          { "$ref": "#/components/parameters/SearchParam" }
+          { "$ref": "#/components/parameters/PerPageParam" }
         ],
         "responses": {
           "200": {
@@ -735,29 +755,67 @@
           "articlesAmount": { "type": "integer" }
         }
       },
+      "CurrentUser": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "name": { "type": "string", "minLength": 2, "maxLength": 32 },
+          "email": { "type": "string", "format": "email" },
+          "avatarUrl": { "type": "string", "nullable": true },
+          "articlesAmount": { "type": "integer", "default": 0 },
+          "savedArticles": { "type": "array", "items": { "type": "string" } },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CurrentUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": { "$ref": "#/components/schemas/CurrentUser" }
+            }
+          }
+        }
+      },
+      "ArticleAuthor": {
+        "type": "object",
+        "description": "Article owner, populated by the server. Never a bare id.",
+        "properties": {
+          "_id": { "type": "string" },
+          "name": { "type": "string" },
+          "avatarUrl": { "type": "string", "nullable": true }
+        }
+      },
       "Article": {
         "type": "object",
         "properties": {
           "_id": { "type": "string" },
           "title": { "type": "string", "minLength": 3, "maxLength": 48 },
-          "desc": { "type": "string" },
-          "article": { "type": "string" },
+          "desc": { "type": "string", "maxLength": 200 },
+          "article": { "type": "string", "minLength": 100, "maxLength": 4000 },
           "img": { "type": "string" },
           "rate": { "type": "number", "default": 0 },
           "date": { "type": "string", "example": "2026-08-11" },
           "category": { "type": "string", "enum": ["popular", "general"], "default": "general" },
-          "ownerId": { "type": "string" },
+          "ownerId": { "$ref": "#/components/schemas/ArticleAuthor" },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "CreateArticleRequest": {
         "type": "object",
-        "required": ["title", "desc", "article", "img"],
+        "required": ["title", "article", "img"],
         "properties": {
           "title": { "type": "string", "minLength": 3, "maxLength": 48 },
-          "desc": { "type": "string" },
-          "article": { "type": "string" },
+          "desc": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Optional short teaser shown on article cards. If omitted, the server builds it from the first 150 characters of article. The create form in the design does not collect it, so normally you leave this empty."
+          },
+          "article": { "type": "string", "minLength": 100, "maxLength": 4000 },
           "category": { "type": "string", "enum": ["popular", "general"] },
           "img": {
             "type": "string",
@@ -771,8 +829,8 @@
         "minProperties": 1,
         "properties": {
           "title": { "type": "string", "minLength": 3, "maxLength": 48 },
-          "desc": { "type": "string" },
-          "article": { "type": "string" },
+          "desc": { "type": "string", "maxLength": 200 },
+          "article": { "type": "string", "minLength": 100, "maxLength": 4000 },
           "category": { "type": "string", "enum": ["popular", "general"] },
           "img": {
             "type": "string",
