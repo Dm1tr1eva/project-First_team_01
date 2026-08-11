@@ -9,6 +9,9 @@ import { articleIdSchema } from "../validations/index.js";
 
 const userRoutes = Router();
 
+// Отримати список користувачів (public)
+userRoutes.get("/", ctrl.getUsers);
+
 // Отримати інфо про користувача за id (public)
 userRoutes.get("/:id", ctrl.getUserInfo);
 
