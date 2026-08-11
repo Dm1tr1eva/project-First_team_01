@@ -141,3 +141,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Локальний беклог після код-ревʼю, не для репозиторію
+REVIEW_BACKLOG.md
