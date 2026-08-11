@@ -5,7 +5,7 @@ const doc = {
     title: "Harmoniq API",
     description: "API for managing user profiles, authors, and their publications.",
   },
-  host: "localhost:3000",
+  servers: [{ url: "/" }, { url: "http://localhost:3000" }],
 };
 
 const outputFile = "./swagger.json";

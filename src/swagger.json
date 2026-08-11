@@ -6,9 +6,8 @@
     "version": "1.0.0"
   },
   "servers": [
-    {
-      "url": "http://localhost:3000/"
-    }
+    { "url": "/" },
+    { "url": "http://localhost:3000" }
   ],
   "tags": [
     { "name": "Auth", "description": "Registration, login and session management" },
@@ -90,6 +89,30 @@
           },
           "401": {
             "description": "Missing or invalid access token",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/session": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Check the current session",
+        "description": "Validates the sessionId and accessToken cookies of the authenticated user.",
+        "security": [{ "sessionAuth": [], "accessTokenAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Session is valid",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SessionCheckResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing access token, session not found, access token expired or user not found",
             "content": {
               "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
             }
@@ -666,6 +689,12 @@
               "accessToken": { "type": "string" }
             }
           }
+        }
+      },
+      "SessionCheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true }
         }
       },
       "UpdateUserRequest": {
