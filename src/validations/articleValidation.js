@@ -22,6 +22,14 @@ export const getArticlesSchema = {
   }),
 };
 
+// GET /users/:id/articles — перевіряє і :id, і пагінацію.
+// Раніше роут вішав саму articleIdSchema, тому query не валідувалася взагалі:
+// ?perPage=abc давало NaN у .skip()/.limit() і 500, а ?perPage=100000 — дамп усієї колекції.
+export const getUserArticlesSchema = {
+  ...articleIdSchema,
+  ...getArticlesSchema,
+};
+
 export const getArticlesFilteredSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),

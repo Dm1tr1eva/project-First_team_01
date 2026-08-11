@@ -2,7 +2,7 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 import { user as ctrl } from "../controllers/index.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
-import { articleIdSchema } from "../validations/index.js";
+import { articleIdSchema, getUserArticlesSchema } from "../validations/index.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 import { updateUserSchema } from "../validations/userValidation.js";
 
@@ -23,7 +23,7 @@ userRoutes.patch(
 );
 
 // Отримати статті користувача (public)
-userRoutes.get("/:id/articles", celebrate(articleIdSchema), ctrl.getUserArticles);
+userRoutes.get("/:id/articles", celebrate(getUserArticlesSchema), ctrl.getUserArticles);
 
 // Отримати збережені статті (private)
 userRoutes.get("/me/saved", authMiddleware, ctrl.getSavedArticles);
