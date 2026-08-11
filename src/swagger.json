@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Harmoniq API",
-    "description": "API for managing user profiles, authors, and their publications. Auth is based on httpOnly cookies, so the **Authorize** button does not work here: open `POST /api/auth/login` for how to sign in from these docs, and `POST /api/auth/refresh` for what to do once your session expires.",
+    "description": "API for managing user profiles, authors, and their publications. Auth is based on httpOnly cookies, so the Authorize button does not work here: open `POST /api/auth/login` for how to sign in from these docs, and `POST /api/auth/refresh` for what to do once your session expires.",
     "version": "1.0.0"
   },
   "servers": [
@@ -50,7 +50,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Log in",
-        "description": "Authenticates a user by email and password and starts a session (sets sessionId, accessToken and refreshToken cookies).\n\n**This is also how you authorise inside Swagger.** The Authorize button will not work for this API: auth rides on httpOnly cookies, and browsers forbid JavaScript from setting the `Cookie` header, so Swagger UI cannot pass them whatever you type into that dialog.\n\nInstead, run this endpoint right here with a real email and password. The server sets the cookies in your browser itself, and every protected endpoint starts working, because these docs are served from the same origin as the API.\n\nThe padlock icons stay open even after a successful login. Swagger UI has no way of knowing the cookies arrived, so judge by the server response, not by the icon.\n\nIf nothing works at all, check the **Servers** dropdown at the top of the page: it should be `/`. With `http://localhost:3000` selected on the deployed docs, requests go to your own machine, where there are no cookies.",
+        "description": "Authenticates a user by email and password and starts a session (sets sessionId, accessToken and refreshToken cookies).\n\nThis is also how you authorise inside Swagger. The Authorize button will not work for this API: auth rides on httpOnly cookies, and browsers forbid JavaScript from setting the `Cookie` header, so Swagger UI cannot pass them whatever you type into that dialog.\n\nInstead, run this endpoint right here with a real email and password. The server sets the cookies in your browser itself, and every protected endpoint starts working, because these docs are served from the same origin as the API.\n\nThe padlock icons stay open even after a successful login. Swagger UI has no way of knowing the cookies arrived, so judge by the server response, not by the icon.\n\nIf nothing works at all, check the Servers dropdown at the top of the page: it should be `/`. With `http://localhost:3000` selected on the deployed docs, requests go to your own machine, where there are no cookies.",
         "requestBody": {
           "required": true,
           "content": {
@@ -124,7 +124,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Refresh a session",
-        "description": "Issues a new session using the sessionId and refreshToken cookies, and sets new session cookies.\n\n**Run this when protected endpoints suddenly stop working.** The `accessToken` cookie lives for 15 minutes, `sessionId` and `refreshToken` for 24 hours. Once those 15 minutes pass the browser drops the cookie by itself, and protected endpoints answer `{ \"message\": \"Missing access token\" }` again even though you did log in earlier.\n\nSo that message means one of two things: you never logged in here, or your 15 minutes ran out.\n\nYou do not need to log in again. This endpoint reads the `refreshToken` cookie, which is still valid, and issues a fresh set. The web app does the same thing in the background; Swagger UI has no such mechanism and will not do it for you.",
+        "description": "Issues a new session using the sessionId and refreshToken cookies, and sets new session cookies.\n\nRun this when protected endpoints suddenly stop working. The `accessToken` cookie lives for 15 minutes, `sessionId` and `refreshToken` for 24 hours. Once those 15 minutes pass the browser drops the cookie by itself, and protected endpoints answer `{ \"message\": \"Missing access token\" }` again even though you did log in earlier.\n\nSo that message means one of two things: you never logged in here, or your 15 minutes ran out.\n\nYou do not need to log in again. This endpoint reads the `refreshToken` cookie, which is still valid, and issues a fresh set. The web app does the same thing in the background; Swagger UI has no such mechanism and will not do it for you.",
         "security": [{ "sessionAuth": [], "refreshTokenAuth": [] }],
         "responses": {
           "200": {
