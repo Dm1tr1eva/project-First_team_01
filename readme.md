@@ -2,6 +2,22 @@
 
 Бекенд для проєкту Harmoniq (Node.js + Express + MongoDB).
 
+## Живий проєкт
+
+| Що | Адреса |
+| --- | --- |
+| API | https://project-first-team-01.onrender.com/api |
+| Документація (Swagger) | https://project-first-team-01.onrender.com/api-docs |
+| Фронтенд | https://project-first-team-01-front-end.vercel.app |
+
+Авторизація тримається на httpOnly-куках, тому кнопка **Authorize** у Swagger
+не працює: браузер не дозволяє JavaScript виставляти заголовок `Cookie`.
+Щоб перевірити приватні ендпоінти, виконайте `POST /api/auth/login` прямо
+в Swagger — далі куки підставляються самі. Детальніше в описі цієї операції.
+
+Перший запит після простою може виконуватись до хвилини: безкоштовний тариф
+Render присипляє сервіс.
+
 ## Стек
 
 - Node.js, Express 5

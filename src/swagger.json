@@ -20,12 +20,15 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Register a new user",
-        "description": "Creates a new user account and starts a session (sets sessionId, accessToken and refreshToken cookies).",
+        "description": "Creates a new user account and starts a session (sets sessionId, accessToken and refreshToken cookies).\n\nThe avatar is optional. Send JSON if you do not have one, or multipart/form-data with an `avatar` file (images only, up to 1 MB) if you do. Both forms are accepted; the avatar can also be set later through PATCH /api/users/me/avatar.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            },
+            "multipart/form-data": {
+              "schema": { "$ref": "#/components/schemas/RegisterMultipartRequest" }
             }
           }
         },
@@ -138,6 +141,45 @@
           },
           "401": {
             "description": "Session not found, invalid or expired refresh token",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "List users",
+        "description": "Returns a paginated list of all users, used for the authors page and the Top Creators block. Public: no session needed.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 1, "default": 1 },
+            "description": "Page number"
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 5, "maximum": 20, "default": 20 },
+            "description": "Number of users per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of users",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UsersListResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pagination query",
             "content": {
               "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
             }
@@ -703,6 +745,21 @@
           "password": { "type": "string", "minLength": 8, "maxLength": 64 }
         }
       },
+      "RegisterMultipartRequest": {
+        "type": "object",
+        "description": "Same fields as RegisterRequest plus an optional avatar file. Use this form only when you actually have an avatar to send.",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": { "type": "string", "minLength": 2, "maxLength": 32 },
+          "email": { "type": "string", "format": "email", "maxLength": 64 },
+          "password": { "type": "string", "minLength": 8, "maxLength": 64 },
+          "avatar": {
+            "type": "string",
+            "format": "binary",
+            "description": "Optional avatar image, max 1 MB"
+          }
+        }
+      },
       "LoginRequest": {
         "type": "object",
         "required": ["email", "password"],
@@ -775,6 +832,29 @@
           "name": { "type": "string" },
           "avatarUrl": { "type": "string", "nullable": true },
           "articlesAmount": { "type": "integer" }
+        }
+      },
+      "UserListItem": {
+        "type": "object",
+        "description": "User as returned by the list endpoint: only what an author card needs.",
+        "properties": {
+          "_id": { "type": "string" },
+          "name": { "type": "string" },
+          "avatarUrl": { "type": "string", "nullable": true },
+          "articlesAmount": { "type": "integer", "default": 0 }
+        }
+      },
+      "UsersListResponse": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer" },
+          "perPage": { "type": "integer" },
+          "totalItems": { "type": "integer" },
+          "totalPages": { "type": "integer" },
+          "users": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UserListItem" }
+          }
         }
       },
       "CurrentUser": {
