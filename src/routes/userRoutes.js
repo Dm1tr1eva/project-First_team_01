@@ -2,8 +2,7 @@ import { Router } from "express";
 import { celebrate } from "celebrate";
 import { user as ctrl } from "../controllers/index.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
-import { articleIdSchema, getUsersSchema } from "../validations/index.js";
-import { articleIdSchema, getUserArticlesSchema } from "../validations/index.js";
+import { articleIdSchema, getUsersSchema, getUserArticlesSchema } from "../validations/index.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 import { updateUserSchema } from "../validations/userValidation.js";
 

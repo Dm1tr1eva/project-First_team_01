@@ -9,7 +9,11 @@ export const getUsers = async (req, res, next) => {
 
   const [totalItems, users] = await Promise.all([
     usersQuery.clone().countDocuments(),
-    usersQuery.skip(skip).limit(perPage),
+    // Сортування обовʼязкове, і саме з _id: сідові користувачі імпортувались
+    // напряму, тож createdAt у них немає. Без тайбрейкера вони всі — одна нічия,
+    // порядок у ній Mongo не гарантує, і сторінки дублюють та гублять авторів.
+    // Той самий баг щойно ловили в списках статей.
+    usersQuery.sort({ createdAt: -1, _id: -1 }).skip(skip).limit(perPage),
   ]);
 
   const totalPages = Math.ceil(totalItems / perPage);
