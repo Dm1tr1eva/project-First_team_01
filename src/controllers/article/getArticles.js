@@ -10,6 +10,9 @@ export const getArticles = async (req, res, next) => {
   const [totalItems, articles] = await Promise.all([
     articlesQuery.clone().countDocuments(),
     articlesQuery
+      // -article: картці потрібні лише заголовок, опис і картинка, а текст
+      // статті в середньому 3170 символів — на 20 карток це ~64 КБ зайвого
+      .select("-article")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(perPage)

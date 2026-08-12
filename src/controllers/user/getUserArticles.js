@@ -8,6 +8,8 @@ export const getUserArticles = async (req, res, next) => {
 
   const [articles, totalArticles] = await Promise.all([
     Article.find({ ownerId: id })
+      // те саме, що й у решті списків: картці текст статті не потрібен
+      .select("-article")
       .skip(skip)
       .limit(Number(perPage))
       .sort({ createdAt: -1 }),

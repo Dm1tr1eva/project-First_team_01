@@ -12,7 +12,8 @@
   "tags": [
     { "name": "Auth", "description": "Registration, login and session management" },
     { "name": "Users", "description": "User profiles, avatars and saved articles" },
-    { "name": "Articles", "description": "Articles CRUD, listing, filtering and search" }
+    { "name": "Articles", "description": "Articles CRUD, listing, filtering and search" },
+    { "name": "Categories", "description": "Fixed list of article categories" }
   ],
   "paths": {
     "/api/auth/register": {
@@ -598,6 +599,27 @@
           }
         }
       }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "List article categories",
+        "description": "Returns the fixed set of article categories. They live in a server constant rather than in the database, because the same list is also used as the enum on the Article model and in the create/update validation schemas, so there is a single source of truth.",
+        "responses": {
+          "200": {
+            "description": "Available categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "string", "enum": ["popular", "general"] },
+                  "example": ["popular", "general"]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -780,6 +802,22 @@
           }
         }
       },
+      "ArticleListItem": {
+        "type": "object",
+        "description": "Article as returned by any list endpoint. Same as Article but without the article body: cards do not need it, and at ~3000 characters per item it would add roughly 64 KB to a page of 20. Fetch GET /api/articles/{id} for the full text.",
+        "properties": {
+          "_id": { "type": "string" },
+          "title": { "type": "string", "minLength": 3, "maxLength": 48 },
+          "desc": { "type": "string", "maxLength": 200 },
+          "img": { "type": "string" },
+          "rate": { "type": "number", "default": 0 },
+          "date": { "type": "string", "example": "2026-08-11" },
+          "category": { "type": "string", "enum": ["popular", "general"], "default": "general" },
+          "ownerId": { "$ref": "#/components/schemas/ArticleAuthor" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
       "ArticleAuthor": {
         "type": "object",
         "description": "Article owner, populated by the server. Never a bare id.",
@@ -856,7 +894,7 @@
           "totalPages": { "type": "integer" },
           "articles": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Article" }
+            "items": { "$ref": "#/components/schemas/ArticleListItem" }
           }
         }
       },
@@ -870,7 +908,7 @@
             "properties": {
               "articles": {
                 "type": "array",
-                "items": { "$ref": "#/components/schemas/Article" }
+                "items": { "$ref": "#/components/schemas/ArticleListItem" }
               },
               "page": { "type": "integer" },
               "perPage": { "type": "integer" },
