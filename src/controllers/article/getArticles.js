@@ -13,7 +13,10 @@ export const getArticles = async (req, res, next) => {
       // -article: картці потрібні лише заголовок, опис і картинка, а текст
       // статті в середньому 3170 символів — на 20 карток це ~64 КБ зайвого
       .select("-article")
-      .sort({ createdAt: -1 })
+      // _id як тайбрейкер обовʼязковий: 200 із 201 сідових статей не мають
+      // createdAt, тож без нього вся ця група — одна нічия, порядок у ній
+      // Mongo не гарантує, і сторінки пагінації дублюють та гублять статті
+      .sort({ createdAt: -1, _id: -1 })
       .skip(skip)
       .limit(perPage)
       .populate("ownerId", "name avatarUrl"),
