@@ -13,14 +13,20 @@ export const createSession = async (userId) => {
   });
 };
 
-export const setSessionCookies = (res, session) => {
+// Ті самі прапорці треба передати і в clearCookie, інакше браузер не зіставить
+// куку з тією, що ставилась, і не видалить її. Тому винесено окремо.
+export const getCookieOptions = () => {
   const isProduction = process.env.NODE_ENV === "production";
 
-  const cookieOptions = {
+  return {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax",
   };
+};
+
+export const setSessionCookies = (res, session) => {
+  const cookieOptions = getCookieOptions();
 
   res.cookie("accessToken", session.accessToken, {
     ...cookieOptions,

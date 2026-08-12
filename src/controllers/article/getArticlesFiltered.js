@@ -26,13 +26,21 @@ export const getArticlesFiltered = async (req, res, next) => {
       ];
     }
  
-    const sort = { [sortBy]: order === "asc" ? 1 : -1 };
+    // _id як вторинний ключ: інакше документи з однаковим значенням sortBy
+    // (а createdAt відсутній у 200 із 201 сідової статті) шикуються довільно,
+    // і сторінки пагінації починають дублювати й губити записи
+    const sort = { [sortBy]: order === "asc" ? 1 : -1, _id: -1 };
  
     const articlesQuery = Article.find(filter);
  
     const [totalItems, articles] = await Promise.all([
       articlesQuery.clone().countDocuments(),
-      articlesQuery.sort(sort).skip(skip).limit(perPage).populate("ownerId", "name avatarUrl"),
+      articlesQuery
+        .select("-article")
+        .sort(sort)
+        .skip(skip)
+        .limit(perPage)
+        .populate("ownerId", "name avatarUrl"),
     ]);
  
     const totalPages = Math.ceil(totalItems / perPage);
