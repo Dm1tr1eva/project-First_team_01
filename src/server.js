@@ -10,6 +10,9 @@ import { logger } from "./middleware/logger.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger.json" with { type: "json" };
+
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import articleRoutes from "./routes/articleRoutes.js";
@@ -52,6 +55,14 @@ app.use(
   }),
 );
 app.use(cookieParser());
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  // withCredentials: щоб "Try it out" гарантовано слав сесійні куки,
+  // не покладаючись на дефолт fetch
+  swaggerUi.setup(swaggerDocument, { swaggerOptions: { withCredentials: true } }),
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

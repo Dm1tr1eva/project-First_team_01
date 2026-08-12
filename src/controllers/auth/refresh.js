@@ -1,4 +1,5 @@
 import createHttpError from "http-errors";
+import { isValidObjectId } from "mongoose";
 import { Session } from "../../models/index.js";
 import {
   createSession,
@@ -9,6 +10,11 @@ export const refresh = async (req, res) => {
   const { sessionId, refreshToken } = req.cookies;
 
   if (!sessionId || !refreshToken) {
+    throw createHttpError(401, "Session not found");
+  }
+
+  // Побиті cookie мають давати 401, з якого фронт іде в логін, а не 500
+  if (!isValidObjectId(sessionId)) {
     throw createHttpError(401, "Session not found");
   }
 

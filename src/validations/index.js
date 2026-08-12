@@ -3,6 +3,7 @@ export { updateUserSchema, getUsersSchema } from "./userValidation.js";
 export {
   articleIdSchema,
   getArticlesSchema,
+  getUserArticlesSchema,
   getArticlesFilteredSchema,
   createArticleSchema,
   updateArticleSchema,
