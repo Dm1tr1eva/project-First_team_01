@@ -38,9 +38,7 @@ export const getArticlesFilteredSchema = {
       .valid(...CATEGORIES)
       .optional(),
     search: Joi.string().trim().allow(""),
-    sortBy: Joi.string()
-      .valid("createdAt", "date", "rate", "title")
-      .default("createdAt"),
+    sortBy: Joi.string().valid("createdAt", "date", "rate", "title").default("createdAt"),
     order: Joi.string().valid("asc", "desc").default("desc"),
   }),
 };
@@ -67,5 +65,7 @@ export const updateArticleSchema = {
     desc: Joi.string().max(200),
     article: Joi.string().min(100).max(4000),
     category: Joi.string().valid(...CATEGORIES),
-  }).min(1), // важливо: не дозволяємо порожнє тіло
+  })
+    .min(1) // важливо: не дозволяємо порожнє тіло
+    .unknown(true),
 };
