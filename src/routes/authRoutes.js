@@ -12,7 +12,7 @@ const authRoutes = Router();
 authRoutes.post("/register", celebrate(registerSchema), ctrl.register);
 
 // Логін (public)
-// authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
+authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
 
 authRoutes.post("/logout", authMiddleware, ctrl.logout);
 
