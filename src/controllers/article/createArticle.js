@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
-import { Article } from "../../models/index.js";
-import { saveFileToCloudinary } from "../../utils/index.js";
+import { Article, User } from "../../models/index.js";
+import { saveFileToCloudinary, buildArticleDesc } from "../../utils/index.js";
 
 export const createArticle = async (req, res, next) => {
   const { title, desc, article, category } = req.body;
@@ -16,13 +16,15 @@ export const createArticle = async (req, res, next) => {
 
   const createdArticle = await Article.create({
     title,
-    desc,
+    desc: desc ?? buildArticleDesc(article),
     article,
     img: imageUrl,
     date,
     category,
     ownerId: req.user._id,
   });
+
+  await User.findByIdAndUpdate(req.user._id, { $inc: { articlesAmount: 1 } });
 
   return res.status(201).json({
     status: 201,

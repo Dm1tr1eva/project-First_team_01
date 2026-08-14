@@ -2,6 +2,22 @@
 
 Бекенд для проєкту Harmoniq (Node.js + Express + MongoDB).
 
+## Живий проєкт
+
+| Що | Адреса |
+| --- | --- |
+| API | https://project-first-team-01.onrender.com/api |
+| Документація (Swagger) | https://project-first-team-01.onrender.com/api-docs |
+| Фронтенд | https://project-first-team-01-front-end.vercel.app |
+
+Авторизація тримається на httpOnly-куках, тому кнопка **Authorize** у Swagger
+не працює: браузер не дозволяє JavaScript виставляти заголовок `Cookie`.
+Щоб перевірити приватні ендпоінти, виконайте `POST /api/auth/login` прямо
+в Swagger — далі куки підставляються самі. Детальніше в описі цієї операції.
+
+Перший запит після простою може виконуватись до хвилини: безкоштовний тариф
+Render присипляє сервіс.
+
 ## Стек
 
 - Node.js, Express 5
@@ -41,7 +57,7 @@
 | `PORT`                  | Порт сервера (за замовчуванням 3000)                          |
 | `NODE_ENV`              | `development` / `production`                                  |
 | `MONGO_URL`             | Рядок підключення до MongoDB Atlas                            |
-| `CLIENT_URL`            | Адреса фронтенду — для CORS (заповнити, коли з'явиться фронт) |
+| `CLIENT_URL`            | Адреси фронтенду для CORS, кілька — через кому                |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary Cloud name                                         |
 | `CLOUDINARY_API_KEY`    | Cloudinary API Key                                            |
 | `CLOUDINARY_API_SECRET` | Cloudinary API Secret                                         |

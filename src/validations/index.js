@@ -1,8 +1,9 @@
 export { registerSchema, loginSchema } from "./authValidation.js";
-export { updateUserSchema } from "./userValidation.js";
+export { updateUserSchema, getUsersSchema } from "./userValidation.js";
 export {
   articleIdSchema,
   getArticlesSchema,
+  getUserArticlesSchema,
   getArticlesFilteredSchema,
   createArticleSchema,
   updateArticleSchema,
