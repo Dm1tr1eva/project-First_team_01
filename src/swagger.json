@@ -395,7 +395,7 @@
             "description": "Article added to saved articles",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SavedArticlesResponse" }
+                "schema": { "$ref": "#/components/schemas/SavedArticleIdsResponse" }
               }
             }
           },
@@ -424,7 +424,7 @@
             "description": "Article removed from saved articles",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SavedArticlesResponse" }
+                "schema": { "$ref": "#/components/schemas/SavedArticleIdsResponse" }
               }
             }
           },
@@ -1006,6 +1006,15 @@
           "savedArticles": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Article" }
+          }
+        }
+      },
+      "SavedArticleIdsResponse": {
+        "type": "object",
+        "properties": {
+          "savedArticles": {
+            "type": "array",
+            "items": { "type": "string" }
           }
         }
       }
