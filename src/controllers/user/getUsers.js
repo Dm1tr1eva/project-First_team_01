@@ -1,7 +1,7 @@
 import { User } from "../../models/User.js";
 
 export const getUsers = async (req, res, next) => {
-  const { page = 1, perPage = 20 } = req.query;
+  const { page = 1, perPage = 20, sortBy = "createdAt", order = "desc" } = req.query;
 
   const skip = (page - 1) * perPage;
 
@@ -13,7 +13,15 @@ export const getUsers = async (req, res, next) => {
     // напряму, тож createdAt у них немає. Без тайбрейкера вони всі — одна нічия,
     // порядок у ній Mongo не гарантує, і сторінки дублюють та гублять авторів.
     // Той самий баг щойно ловили в списках статей.
-    usersQuery.sort({ createdAt: -1, _id: -1 }).skip(skip).limit(perPage),
+    //
+    // sortBy=articlesAmount — для Top Creators: сортування має відбуватись
+    // ДО пагінації, на всій колекції, а не на клієнті над сторінкою, яку
+    // віддав бекенд (інакше топ-N рахувався б лише серед перших N за
+    // замовчуванням, а не серед усіх користувачів).
+    usersQuery
+      .sort({ [sortBy]: order === "asc" ? 1 : -1, _id: -1 })
+      .skip(skip)
+      .limit(perPage),
   ]);
 
   const totalPages = Math.ceil(totalItems / perPage);
