@@ -5,7 +5,14 @@ import { Session } from "../../models/Session.js";
 import { createSession, setSessionCookies } from "../../services/session.js";
 
 export const login = async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
+  // collation: у базі є акаунти, зареєстровані до нормалізації регістру
+  // (напр. "USER@gmail.com"). Без неї Joi вже приводить вхід до нижнього
+  // регістру, але точний запит все одно не знайде документ зі старим
+  // регістром у полі — саме так виникала хибна "Invalid credentials".
+  const user = await User.findOne({ email: req.body.email }).collation({
+    locale: "en",
+    strength: 2,
+  });
   if (!user) {
     throw createHttpError(401, "Invalid credentials");
   }
