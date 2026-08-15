@@ -381,7 +381,7 @@
       "get": {
         "tags": ["Users"],
         "summary": "Get saved articles",
-        "description": "Returns the list of articles saved by the authenticated user.",
+        "description": "Returns the list of articles saved by the authenticated user, as full article objects with the owner populated.\n\nUnlike POST/DELETE on /api/users/me/saved/{id}, this returns full objects rather than ids: this is the endpoint that renders the saved-articles page from scratch, so it needs the actual data, not just a list of ids the client can't render anything from.",
         "security": [{ "sessionAuth": [], "accessTokenAuth": [] }],
         "responses": {
           "200": {
@@ -405,7 +405,7 @@
       "post": {
         "tags": ["Users"],
         "summary": "Save an article",
-        "description": "Adds the article with the given id to the authenticated user's saved articles.",
+        "description": "Adds the article with the given id to the authenticated user's saved articles.\n\nReturns only the updated list of ids, not full article objects. The client already has the full article in hand when it calls this (that is where the save button lives), so echoing it back would be redundant. For full article data use GET /api/users/me/saved.",
         "security": [{ "sessionAuth": [], "accessTokenAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/ArticleIdParam" }],
         "responses": {
@@ -434,7 +434,7 @@
       "delete": {
         "tags": ["Users"],
         "summary": "Remove a saved article",
-        "description": "Removes the article with the given id from the authenticated user's saved articles.",
+        "description": "Removes the article with the given id from the authenticated user's saved articles.\n\nSame shape as POST on this path: only the updated list of ids, not full article objects, for the same reason.",
         "security": [{ "sessionAuth": [], "accessTokenAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/ArticleIdParam" }],
         "responses": {
