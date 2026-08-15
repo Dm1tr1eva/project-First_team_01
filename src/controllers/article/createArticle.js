@@ -25,6 +25,7 @@ export const createArticle = async (req, res, next) => {
   });
 
   await User.findByIdAndUpdate(req.user._id, { $inc: { articlesAmount: 1 } });
+  await createdArticle.populate("ownerId", "name avatarUrl");
 
   return res.status(201).json({
     status: 201,
