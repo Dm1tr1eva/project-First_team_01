@@ -15,7 +15,7 @@ export const registerSchema = {
       .pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)
       .required(),
 
-    password: Joi.string().min(8).max(64).required(),
+    password: Joi.string().trim().min(8).max(64).pattern(/\S/).required(),
   }),
 };
 
