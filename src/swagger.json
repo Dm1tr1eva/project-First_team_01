@@ -167,6 +167,24 @@
             "required": false,
             "schema": { "type": "integer", "minimum": 5, "maximum": 20, "default": 20 },
             "description": "Number of users per page"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["createdAt", "articlesAmount"],
+              "default": "createdAt"
+            },
+            "description": "Use articlesAmount for a Top Creators ranking. Sorting happens server-side before pagination, over the whole collection, so the top N is accurate rather than computed from just the default page."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" },
+            "description": "Sort direction"
           }
         ],
         "responses": {
