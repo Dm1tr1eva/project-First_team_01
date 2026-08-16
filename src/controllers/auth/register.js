@@ -8,7 +8,10 @@ import { saveFileToCloudinary } from "../../utils/index.js";
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
-  const existingUser = await User.findOne({ email });
+  // collation: щоб "user@gmail.com" і "USER@gmail.com" вважались тим самим
+  // email при перевірці на дублікат — інакше можна зареєструвати два
+  // акаунти на одну й ту саму адресу, які різняться лише регістром.
+  const existingUser = await User.findOne({ email }).collation({ locale: "en", strength: 2 });
 
   if (existingUser) {
     throw createHttpError(400, "Email is already in use");

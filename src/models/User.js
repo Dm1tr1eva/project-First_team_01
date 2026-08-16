@@ -15,6 +15,7 @@ const userSchema = new Schema(
       sparse: true,
       maxlength: 64,
       trim: true,
+      lowercase: true,
     },
     password: {
       type: String,
