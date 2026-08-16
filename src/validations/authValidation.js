@@ -37,7 +37,6 @@ export const registerSchema = {
       })
       .required(),
   }),
-  }),
 };
 
 export const loginSchema = {
