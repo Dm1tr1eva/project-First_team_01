@@ -15,7 +15,22 @@ export const registerSchema = {
       .pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)
       .required(),
 
-    password: Joi.string().trim().min(8).max(64).pattern(/\S/).required(),
+    password: Joi.string()
+      .trim()
+      .min(8)
+      .max(64)
+      .pattern(/\S/)
+      .custom((value, helpers) => {
+        if (Buffer.byteLength(value, "utf8") > 72) {
+          return helpers.error("string.maxBytes");
+        }
+
+        return value;
+      })
+      .messages({
+        "string.maxBytes": "Password must not exceed 72 bytes",
+      })
+      .required(),
   }),
 };
 
