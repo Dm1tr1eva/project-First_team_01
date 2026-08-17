@@ -1,9 +1,10 @@
 import { Joi, Segments } from "celebrate";
+import { emailSchema } from "./emailSchema.js";
 
 export const updateUserSchema = {
   [Segments.BODY]: Joi.object({
     name: Joi.string().min(2).max(32),
-    email: Joi.string().email().max(64),
+    email: emailSchema(),
   }).min(1), // важливо: не дозволяємо порожнє тіло
 };
 
