@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
 import { Article } from "../../models/index.js";
-import { saveFileToCloudinary } from "../../utils/index.js";
+import { saveFileToCloudinary, buildArticleDesc } from "../../utils/index.js";
 
 export const updateArticle = async (req, res, next) => {
   try {
@@ -27,9 +27,17 @@ export const updateArticle = async (req, res, next) => {
     const updatedData = {};
 
     if (title !== undefined) updatedData.title = title;
-    if (desc !== undefined) updatedData.desc = desc;
-    if (article !== undefined) updatedData.article = article;
     if (category !== undefined) updatedData.category = category;
+
+    if (article !== undefined) {
+      updatedData.article = article;
+      // Форма редагування не має поля desc (як і форма створення), тож без
+      // цього desc лишався би старим назавжди після зміни тексту статті —
+      // та сама логіка, що й у createArticle.js
+      updatedData.desc = desc ?? buildArticleDesc(article);
+    } else if (desc !== undefined) {
+      updatedData.desc = desc;
+    }
 
     updatedData.img = imageUrl;
 
