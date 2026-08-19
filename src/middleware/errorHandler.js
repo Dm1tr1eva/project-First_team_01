@@ -1,19 +1,20 @@
 import { HttpError } from "http-errors";
 import multer from "multer";
 import { isCelebrateError } from "celebrate";
-export const errorHandler = (err, req, res) => {
+export const errorHandler = (err, req, res, next) => {
   console.error("Error Middleware:", err);
 
   // Joi / Celebrate validation errors
   if (isCelebrateError(err)) {
-    const error = err.details.get("body");
+    for (const segment of err.details.keys()) {
+      const error = err.details.get(segment);
+      const message = error?.details?.[0]?.message;
 
-    if (error) {
-      const message = error.details[0]?.message;
-
-      return res.status(400).json({
-        message: message || "Please check the entered data",
-      });
+      if (message) {
+        return res.status(400).json({
+          message,
+        });
+      }
     }
 
     return res.status(400).json({

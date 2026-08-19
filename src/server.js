@@ -4,7 +4,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
-import { errors } from "celebrate";
 import { connectMongoDB } from "./db/connectToMongoDB.js";
 import { logger } from "./middleware/logger.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
@@ -70,7 +69,7 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/categories", categoriesRoutes);
 
 app.use(notFoundHandler);
-app.use(errors());
+
 app.use(errorHandler);
 
 await connectMongoDB();
