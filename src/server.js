@@ -17,6 +17,18 @@ import userRoutes from "./routes/userRoutes.js";
 import articleRoutes from "./routes/articleRoutes.js";
 import categoriesRoutes from "./routes/categoriesRoutes.js";
 
+// Без цього обрив звʼязку з Atlas (чи будь-який неспійманий проміс/виняток
+// поза Express-обробником) просто мовчки вбиває процес без жодного сліду
+// в логах — Render рестартує контейнер, і причина падіння губиться
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled promise rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error);
+  process.exit(1);
+});
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -32,6 +44,14 @@ const allowedOrigins = [
     .filter(Boolean),
   ...(process.env.NODE_ENV === "production" ? [] : DEV_ORIGINS),
 ];
+
+// Порожній CLIENT_URL у проді = allowedOrigins порожній = CORS мовчки
+// блокує геть усі браузерні запити, а сервер при цьому відповідає 200 і
+// виглядає в логах живим — падати одразу зрозуміліше, ніж ловити це постфактум
+if (process.env.NODE_ENV === "production" && allowedOrigins.length === 0) {
+  console.error("CLIENT_URL is not set in production — refusing to start.");
+  process.exit(1);
+}
 
 app.use(logger);
 app.use(helmet());
