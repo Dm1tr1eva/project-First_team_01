@@ -20,7 +20,7 @@ export const deleteAvatar = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { avatarUrl: "" },
-      { new: true }
+      { returnDocument: "after" },
     );
 
     if (!user) {
