@@ -14,15 +14,15 @@ export const login = async (req, res, next) => {
     strength: 2,
   });
   if (!user) {
-    throw createHttpError(401, "Invalid credentials");
+    throw createHttpError(401, "Incorrect email or password");
   }
   if (!user.password) {
-    throw createHttpError(401, "Invalid credentials");
+    throw createHttpError(401, "Incorrect email or password");
   }
   const isValidPassword = await bcrypt.compare(req.body.password, user.password);
 
   if (!isValidPassword) {
-    throw createHttpError(401, "Invalid credentials");
+    throw createHttpError(401, "Incorrect email or password");
   }
 
   await Session.deleteOne({ userId: user._id });
