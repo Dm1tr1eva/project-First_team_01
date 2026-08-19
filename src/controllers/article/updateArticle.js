@@ -1,4 +1,5 @@
 import createHttpError from "http-errors";
+import { v2 as cloudinary } from "cloudinary";
 import { Article } from "../../models/index.js";
 import { saveFileToCloudinary, buildArticleDesc } from "../../utils/index.js";
 
@@ -22,6 +23,17 @@ export const updateArticle = async (req, res, next) => {
 
     if (file) {
       imageUrl = await saveFileToCloudinary(file.buffer, "articles");
+
+      // Без цього стара картинка лишається сиротою в Cloudinary назавжди —
+      // deleteArticle.js так само чистить зображення при видаленні статті
+      if (existingArticle.img) {
+        try {
+          const publicId = existingArticle.img.split("/").pop().split(".")[0];
+          await cloudinary.uploader.destroy(`articles/${publicId}`);
+        } catch (cleanupError) {
+          console.warn("Не вдалося видалити стару картинку статті:", cleanupError.message);
+        }
+      }
     }
 
     const updatedData = {};
@@ -42,9 +54,9 @@ export const updateArticle = async (req, res, next) => {
     updatedData.img = imageUrl;
 
     const updatedArticle = await Article.findByIdAndUpdate(id, updatedData, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
-    });
+    }).populate("ownerId", "name avatarUrl");
 
     return res.status(200).json({
       status: 200,
