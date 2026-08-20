@@ -15,12 +15,14 @@ authRoutes.post("/register", upload.single("avatar"), celebrate(registerSchema),
 // Логін (public)
 authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
 
+// Логаут (private)
 authRoutes.post("/logout", authMiddleware, ctrl.logout);
 
-// Оновлення access/refresh токена (protected)
-// authRoutes.post("/refresh", ctrl.refresh);
-// Оновлення access/refresh токена (protected)
+// Перевірка активної сесії (private)
 authRoutes.get("/session", authMiddleware, ctrl.sessionTru);
+
+// Оновлення access/refresh токена (protected) — валідність refreshToken
+// перевіряється всередині контролера, не через celebrate
 authRoutes.post("/refresh", ctrl.refresh);
 
 export default authRoutes;

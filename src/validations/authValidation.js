@@ -41,6 +41,12 @@ export const registerSchema = {
         "any.required": "Password is required",
       })
       .required(),
+
+    // Форма реєстрації має поле "Repeat your password" — фронт вирізає його
+    // з payload перед відправкою, але strip() тут про запас: без нього Joi
+    // за замовчуванням відхиляє незнайомі ключі, і будь-хто, хто надішле
+    // repeatPassword напряму (напр. цілий values з Formik), отримає 400
+    repeatPassword: Joi.any().strip(),
   }),
 };
 

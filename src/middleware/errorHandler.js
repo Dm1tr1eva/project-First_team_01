@@ -2,7 +2,11 @@ import { HttpError } from "http-errors";
 import multer from "multer";
 import { isCelebrateError } from "celebrate";
 export const errorHandler = (err, req, res, next) => {
-  console.error("Error Middleware:", err);
+  // Очікувані 4xx (гість без сесії, невалідний ввід тощо) — не помилка сервера,
+  // не варто засмічувати логи повним стеktrace на кожен неавторизований запит
+  if (!err.status || err.status >= 500) {
+    console.error("Error Middleware:", err);
+  }
 
   // Joi / Celebrate validation errors
   if (isCelebrateError(err)) {
