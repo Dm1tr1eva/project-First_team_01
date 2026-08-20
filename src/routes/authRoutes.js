@@ -15,8 +15,10 @@ authRoutes.post("/register", upload.single("avatar"), celebrate(registerSchema),
 // Логін (public)
 authRoutes.post("/login", celebrate(loginSchema), ctrl.login);
 
-// Логаут (private)
-authRoutes.post("/logout", authMiddleware, ctrl.logout);
+// Логаут (без authMiddleware: accessToken живе 15 хв і часто вже
+// прострочений або сесія вже видалена на момент виходу — власна
+// перевірка володіння по refreshToken лишається всередині контролера)
+authRoutes.post("/logout", ctrl.logout);
 
 // Перевірка активної сесії (private)
 authRoutes.get("/session", authMiddleware, ctrl.sessionTru);
