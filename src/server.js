@@ -3,6 +3,7 @@ import "dotenv/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 
 import { connectMongoDB } from "./db/connectToMongoDB.js";
 import { logger } from "./middleware/logger.js";
@@ -31,6 +32,11 @@ process.on("uncaughtException", (error) => {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Render стоїть за проксі — без цього express-rate-limit (і будь-що інше,
+// що дивиться на req.ip) бачить лише внутрішню IP Render, тобто всіх
+// відвідувачів як одного клієнта
+app.set("trust proxy", 1);
 
 // Локальні адреси фронтенду — щоб команді не треба було заповнювати CLIENT_URL для дев-режиму
 const DEV_ORIGINS = ["http://localhost:3000", "http://localhost:3001"];
@@ -75,6 +81,46 @@ app.use(
 );
 app.use(cookieParser());
 
+// Мінімальний CSRF-захист (BE-06): CORS-колбек вище блокує лише читання
+// відповіді чужим origin, а не сам запит, якщо він "простий" (без кастомних
+// заголовків — POST multipart/form-data чи text/plain такий і є, преflight
+// не йде). Кастомний заголовок форсує preflight, який CORS уже коректно
+// відхиляє для чужого origin. Легітимний виклик (наш же BFF-проксі з Vercel
+// на Render — не браузер, CORS на нього не діє) додає цей заголовок сам,
+// див. proxyRequest.ts/api.ts на фронті.
+function requireCustomHeaderOnMutations(req, res, next) {
+  const isSafeMethod = req.method === "GET" || req.method === "HEAD";
+
+  if (isSafeMethod || req.get("X-Requested-With") === "XMLHttpRequest") {
+    return next();
+  }
+
+  return res.status(403).json({ message: "Missing required header" });
+}
+
+app.use(requireCustomHeaderOnMutations);
+
+// Rate limiting (BE-07): без нього /auth/login відкритий для брутфорсу,
+// /auth/register — для спаму акаунтами, POST /articles — для заливання
+// Cloudinary до вичерпання квоти.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many attempts, please try again later" },
+});
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many requests, please try again later" },
+});
+
+app.use(globalLimiter);
+
 app.use(
   "/api-docs",
   swaggerUi.serve,
@@ -83,7 +129,7 @@ app.use(
   swaggerUi.setup(swaggerDocument, { swaggerOptions: { withCredentials: true } }),
 );
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/categories", categoriesRoutes);
